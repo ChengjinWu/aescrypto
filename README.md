@@ -1,4 +1,4 @@
-java-aes-crypto
+golang-aes-crypto
 ===============
 
 A simple Android class for encrypting &amp; decrypting strings, aiming to avoid [serious cryptographic errors](http://tozny.com/blog/encrypting-strings-in-android-lets-make-better-mistakes/) that most such classes suffer from. [Show me the code](https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java)
