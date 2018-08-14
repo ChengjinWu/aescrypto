@@ -1,11 +1,11 @@
 golang-aes-crypto
 ===============
 
-A simple Android class for encrypting &amp; decrypting strings, aiming to avoid [serious cryptographic errors](http://tozny.com/blog/encrypting-strings-in-android-lets-make-better-mistakes/) that most such classes suffer from. [Show me the code](https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java)
+A simple go struct for encrypting &amp; decrypting strings。
 
 # Features
 
-Here are the features of this class. We believe that these properties are consistent with what a lot of people are looking for when encrypting Strings in Android.
+Here are the features of this struct. We believe that these properties are consistent with what a lot of people are looking for when encrypting Strings in Android.
 
 * *Works for strings*: It should encrypt arbitrary strings or byte arrays. This means it needs to effectively handle multiple blocks (CBC) and partial blocks (padding). It consistently serializes and deserializes ciphertext, IVs, and key material using base64 to make it easy to store.
 * *Algorithm & Mode*: We chose: AES 128, CBC, and PKCS5 padding. We would have picked GCM for its built-in integrity checking, but that's only available since Android Jelly Bean.
@@ -18,62 +18,64 @@ Here are the features of this class. We believe that these properties are consis
 
 ## Copy and paste
 
-It's a single very simple java class,
-[AesCbcWithIntegrity.java](https://github.com/tozny/java-aes-crypto/blob/master/aes-crypto/src/main/java/com/tozny/crypto/android/AesCbcWithIntegrity.java)
-that works across most or all versions of Android. The class should be easy to
-paste into an existing codebase.
+It's a single very simple go function,The function should be easy to paste into an existing codebase.
 
-## Android Library project
+## Go Dependency
 
-The library is in Android library project format so you can clone this project
-and add as a library module/project.
-
-## Maven Dependency
-
-We've also published the library AAR file via Jitpack for simple
-gradle dependency management:
-
-Add the Jitpack repository to your root build.gradle:
-
-```groovy
-allprojects {
-  repositories {
-    ...
-    maven { url 'https://jitpack.io' }
-  }
-}
+```go
+    go get github.com/ChengjinWu/aescrypto
 ```
 
-Add the dependency to your project's build.gradle:
-
-```groovy
-dependencies {
-  compile 'com.github.tozny:java-aes-crypto:1.1.0'
-}
-```
 
 # Examples
 
-## Generate new key
 
-```java
-  AesCbcWithIntegrity.SecretKeys keys = AesCbcWithIntegrity.generateKey();
+## aes、ecb、pkcs7加密解密算法
+
+```go
+  /*
+  	*src 要加密的字符串
+  	*key 用来加密的密钥 密钥长度可以是128bit、192bit、256bit中的任意一个
+  	*16位key对应128bit
+  	 */
+  	src := "10001111111111111111111111111123456789"
+  	key := "1234123412341234123412341234abcd"
+
+  	crypted, err := aescrypto.AesEcbPkcs5Encrypt([]byte(src), []byte(key))
+  	if err != nil {
+  		fmt.Println(err)
+  	}
+  	fmt.Println("base64UrlSafe result:", base64.URLEncoding.EncodeToString(crypted))
+  	data, err := aescrypto.AesEcbPkcs5Decrypt(crypted, []byte(key))
+
+  	if err != nil {
+  		fmt.Println(err)
+  	}
+  	fmt.Println("source is :", string(data))
 ```
 
-## Encrypt
+## aes、cbc、pkcs7加密解密算法
 
-```java
-   AesCbcWithIntegrity.CipherTextIvMac cipherTextIvMac = AesCbcWithIntegrity.encrypt("some test", keys);
-   //store or send to server
-   String ciphertextString = cipherTextIvMac.toString();
-```
+```go
+  	/*
+  	*src 要加密的字符串
+  	*key 用来加密的密钥 密钥长度可以是128bit、192bit、256bit中的任意一个
+  	*16位key对应128bit
+  	 */
+  	src := "10001111111111111111111111111123456789"
+  	key := "1234123412341234123412341234abcd"
 
-## Decrypt
+  	crypted, err := aescrypto.AesCbcPkcs7Encrypt([]byte(src), []byte(key), nil)
+  	if err != nil {
+  		fmt.Println(err)
+  	}
+  	fmt.Println("base64UrlSafe result:", base64.URLEncoding.EncodeToString(crypted))
+  	data, err := aescrypto.AesCbcPkcs7Decrypt(crypted, []byte(key), nil)
 
-```java
-  //Use the constructor to re-create the CipherTextIvMac class from the string:
-  CipherTextIvMac cipherTextIvMac = new CipherTextIvMac (cipherTextString);
-  String plainText = AesCbcWithIntegrity.decryptString(cipherTextIvMac, keys);
+  	if err != nil {
+  		fmt.Println(err)
+  	}
+  	fmt.Println("source is :", string(data))
 ```
 
 ## Storing Keys
