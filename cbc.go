@@ -33,6 +33,9 @@ func AesCbcPkcs7Decrypt(ciphertext, key, ikey []byte) ([]byte, error) {
 	blockModel := cipher.NewCBCDecrypter(block, ikey[:block.BlockSize()])
 	plantText := make([]byte, len(ciphertext))
 	blockModel.CryptBlocks(plantText, ciphertext)
-	plantText = PKCS7UnPadding(plantText)
+	plantText,err = PKCS7UnPadding(plantText)
+	if err != nil {
+		return nil, err
+	}
 	return plantText, nil
 }

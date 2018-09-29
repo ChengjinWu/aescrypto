@@ -101,6 +101,9 @@ func AesEcbPkcs5Decrypt(crypted, key []byte) ([]byte, error) {
 	blockMode := NewECBDecrypter(block)
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
-	origData = PKCS5UnPadding(origData)
+	origData,err = PKCS5UnPadding(origData)
+	if err != nil {
+		return nil, err
+	}
 	return origData, nil
 }

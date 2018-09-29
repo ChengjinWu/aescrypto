@@ -1,6 +1,9 @@
 package aescrypto
 
-import "bytes"
+import (
+	"bytes"
+	"errors"
+)
 
 // PKCS5包装
 func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
@@ -10,10 +13,14 @@ func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
 }
 
 // PKCS5解包装
-func PKCS7UnPadding(plantText []byte) []byte {
+func PKCS7UnPadding(plantText []byte) ([]byte, error) {
 	length := len(plantText)
 	unpadding := int(plantText[length-1])
-	return plantText[:(length - unpadding)]
+	effectiveCount := length - unpadding
+	if effectiveCount <= 0 {
+		return nil, errors.New("The key does not support the ciphertext")
+	}
+	return plantText[:effectiveCount], nil
 }
 
 // PKCS5包装
@@ -24,7 +31,11 @@ func PKCS5Padding(cipherText []byte, blockSize int) []byte {
 }
 
 // PKCS5解包装
-func PKCS5UnPadding(encrypt []byte) []byte {
+func PKCS5UnPadding(encrypt []byte) ([]byte, error) {
 	padding := encrypt[len(encrypt)-1]
-	return encrypt[:len(encrypt)-int(padding)]
+	effectiveCount := len(encrypt) - int(padding)
+	if effectiveCount <= 0 {
+		return nil, errors.New("The key does not support the ciphertext")
+	}
+	return encrypt[:effectiveCount], nil
 }
