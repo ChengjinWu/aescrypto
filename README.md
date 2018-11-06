@@ -1,4 +1,4 @@
-golang-aes-crypto
+golang-aes-crypto [中文](https://github.com/ChengjinWu/aescrypto/wiki)
 ===============
 
 A simple go struct for encrypting &amp; decrypting strings。
